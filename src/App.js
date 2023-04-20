@@ -1,36 +1,46 @@
 import { useState, useEffect } from "react";
 
 function App() {
-  const [toDo, setToDo] = useState("");
-  const [toDos, setToDos] = useState([]);
-  const onChange = (event) => setToDo(event.target.value);
-  const onSubmit = (event) => {
-    event.preventDefault();
-    if (toDo === "") {
-      return; // toDo가 비어있는 경우 submit을 수행하지 않음.
-    }
-    setToDos((currentArray) => [...currentArray, toDo]);
-    setToDo(""); // submit 이후 input을 비워줌.
+  const [loading, setLoading] = useState(true);
+  const [coins, setCoins] = useState([]);
+  const [coinPrice, setCoinPrice] = useState(1);
+  const [money, setMoney] = useState(0);
+  useEffect(() => {
+    fetch(`https://api.coinpaprika.com/v1/tickers`)
+      .then((response) => response.json())
+      .then((json) => {
+        setCoins(json);
+        setLoading(false);
+      }); // 네트워크에서 JSON 파일을 가져와서 coins에 저장.
+  }, []);
+  const handleCoinPrice = (event) => {
+    setCoinPrice(event.target.value);
   };
-  console.log(toDos);
+  const handleMoneyInput = (event) => {
+    setMoney(event.target.value);
+  };
   return (
     <div>
-      <h1>My To Dos ({toDos.length})</h1>
-      <form onSubmit={onSubmit}>
-        <input
-          onChange={onChange}
-          value={toDo}
-          type="text"
-          placeholder="Write your to do.."
-        />
-        <button>Add To Do</button>
-      </form>
-      <hr />
-      <ul>
-        {toDos.map((item, index) => (
-          <li key={index}>{item}</li>
-        ))}
-      </ul>
+      <h1>
+        {loading ? "Loading..." : `We have ${coins.length} types of Coins`}
+      </h1>
+      {loading ? (
+        <strong>Loading...</strong>
+      ) : (
+        <select onChange={handleCoinPrice}>
+          <option>Select a Coin!</option>
+          {coins.map((coin, index) => (
+            <option key={index} value={coin.quotes.USD.price}>
+              {coin.name} ({coin.symbol}): {coin.quotes.USD.price} USD
+            </option>
+          ))}
+        </select>
+      )}
+      <div>
+        <h3>How much money do you have?</h3>
+        <input type="number" value={money} onChange={handleMoneyInput} />$
+      </div>
+      <h3>You can have {money / coinPrice} coins</h3>
     </div>
   );
 }
