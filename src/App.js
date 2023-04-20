@@ -27,20 +27,22 @@ function App() {
       {loading ? (
         <strong>Loading...</strong>
       ) : (
-        <select onChange={handleCoinPrice}>
-          <option>Select a Coin!</option>
-          {coins.map((coin, index) => (
-            <option key={index} value={coin.quotes.USD.price}>
-              {coin.name} ({coin.symbol}): {coin.quotes.USD.price} USD
-            </option>
-          ))}
-        </select>
+        <div>
+          <select onChange={handleCoinPrice}>
+            <option>Select a Coin!</option>
+            {coins.map((coin, index) => (
+              <option key={index} value={coin.quotes.USD.price}>
+                {coin.name} ({coin.symbol}): {coin.quotes.USD.price} USD
+              </option>
+            ))}
+          </select>
+          <div>
+            <h3>How much money do you have?</h3>
+            <input type="number" value={money} onChange={handleMoneyInput} />$
+          </div>
+          <h3>You can have {money / coinPrice} coins</h3>
+        </div>
       )}
-      <div>
-        <h3>How much money do you have?</h3>
-        <input type="number" value={money} onChange={handleMoneyInput} />$
-      </div>
-      <h3>You can have {money / coinPrice} coins</h3>
     </div>
   );
 }
